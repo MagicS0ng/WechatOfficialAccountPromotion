@@ -1,0 +1,22 @@
+{
+  "name": "cns",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "serve": "node app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "koa": "^2.15.3",
+    "koa-router": "^12.0.1",
+    "mysql": "^2.18.1",
+    "wechat": "^2.1.0",
+    "winston": "^3.13.0"
+  }
+}
