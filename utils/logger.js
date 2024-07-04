@@ -1,9 +1,11 @@
 const winston = require('winston');
-
+const timezone = ()=>{
+    return new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+}
 const logger = winston.createLogger({
     level: 'info',
     format: winston.format.combine(
-        winston.format.timestamp(),
+        winston.format.timestamp({format: timezone }),
         winston.format.printf(({ timestamp, level, message }) => {
             return `${timestamp} [${level}]: ${message}`;
         })
