@@ -1,4 +1,5 @@
 *.txt
+.vscode/
 node_modules/
 config.js
 logs/
