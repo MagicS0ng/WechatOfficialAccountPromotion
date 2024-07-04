@@ -37,6 +37,7 @@ async function handleOAuthCallback(req, res) {
     try {
         const tokenData = await wechatService.getOAuthAccessToken(code);
         const userInfo = await wechatService.getUserInfo(tokenData.access_token, tokenData.openid);
+        const {openid,} = userInfo;
         // 将用户信息存储在session或其他存储中
         // 这里假设使用session
         req.session.user = userInfo;
