@@ -1,8 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Submission = sequelize.define(
-  "users",
+const User = sequelize.define(
+  "User",
   {
     openid: {
       type: DataTypes.STRING(100),
@@ -32,11 +32,18 @@ const Submission = sequelize.define(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    expired_at: {
+      type: DataTypes.DATE,
+    },
   },
   {
     tableName: "users",
     timestamps: false,
+    hooks: {
+      beforeCreate: async (user, options) => {
+        user.expired_at = sequelize.literal("CURRENT_DATE + INVERVAL 1 YEAR");
+      },
+    },
   }
 );
-
-module.exports = Submission;
+module.exports = User;
