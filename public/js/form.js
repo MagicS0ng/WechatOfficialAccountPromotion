@@ -77,8 +77,10 @@ const phoneInput = document.getElementById("promotionForm").elements["phone"];
 
 phoneInput.addEventListener("blur", function () {
   if (!isChinesePhoneNumber(this.value)) {
+    document.getElementById("message").textContent = "请输入正确格式的手机号";
     shakeAndHighlight(this);
   } else {
+    document.getElementById("message").textContent="";
     this.style.borderColor = ""; // 格式正确时清除可能存在的红色边框
   }
 });

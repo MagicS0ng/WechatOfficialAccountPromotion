@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promotion Form</title>
+    <title>信息登记</title>
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
     <div class="form-container">
-        <h2>Promotion Form</h2>
+        <h2>登记你的信息</h2>
         <form id="promotionForm">
-            <input type="text" name="phone" placeholder="Phone Number" required>
-            <input type="text" name="receipt" placeholder="Installation Receipt" required>
-            <input type="date" name="installationDate" required>
-            <button type="submit">Submit</button>
+            <div><span id="message"></span>
+            <input type="text" name="phone" placeholder="手机号" required>
+        </div>
+            <input type="text" name="receipt" placeholder="安装回执" required>
+            <input type="date" name="installationDate"  value="" required>
+            <button type="submit">提交</button>
         </form>
         <div id="errorMessage" style="color: red;"></div>
         <div id="successMessage" style="color: green;"></div>
