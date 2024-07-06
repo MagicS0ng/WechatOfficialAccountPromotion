@@ -9,7 +9,7 @@ document
 
     // 先检查手机号和收据是否存在
     try {
-      const checkResponse = await fetch("/api/promotion/check", {
+      const checkResponse = await fetch("/api/userinfosubmission/check", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -26,7 +26,7 @@ document
       }
 
       // 如果检查通过，则提交表单
-      const response = await fetch("/api/promotion", {
+      const response = await fetch("/api/userinfosubmission", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

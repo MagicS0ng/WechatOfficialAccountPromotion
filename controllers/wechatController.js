@@ -45,7 +45,7 @@ async function handleOAuthCallback(req, res) {
     req.session.user = userInfo;
     const isSummitted = await checkUserHasSubmit(userInfo.openid);
     if (isSummitted) {
-      res.redirect("/promotion.html");
+      res.redirect(`/promotioninfo.html?userId=${isSummitted.id}`);
       return;
     }
     res.redirect("/form.html");

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息展示</title>
+    <link rel="stylesheet" href="./css/promotionStyle.css">
+</head>
+<body>
+    <div class="container">
+        <div class="info">
+            <strong>微信昵称</strong><br>
+            <span id="nickname"></span>
+        </div>
+        <div class="info">
+            <strong>手机号</strong><br>
+            <span id="phoneNumber"></span>
+        </div>
+        <div class="info">
+            <strong>推广人数</strong>
+            <span id="promotionCount"></span>
+        </div>
+        <div class="info">
+            <strong>可提现￥</strong>
+            <span id="withdrawableAmount"></span> 
+        </div>
+        <div class="info">
+            <strong>距过期</strong>
+            <span>还有</span>
+            <span id="expire_time"></span>
+            <span>天</span>
+        </div>
+        <div class="qr-code">
+            <strong>专属推广二维码</strong><br>
+            <img id="qrCodeImage" src="" alt="QR Code">
+            <br>
+            <span>(保存二维码到本地)</span>
+        </div>
+        <div id="response"></div>
+    </div>
+</body>
+<script src="./js/promotioninfo.js"></script>
+</html>
