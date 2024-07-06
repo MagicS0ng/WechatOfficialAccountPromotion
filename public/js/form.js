@@ -1,3 +1,4 @@
+document.getElementsByName("installationDate")[0].max = new Date().toISOString().split("T")[0];
 document
   .getElementById("promotionForm")
   .addEventListener("submit", async function (event) {
@@ -6,7 +7,6 @@ document
     const phone = event.target.phone.value;
     const receipt = event.target.receipt.value;
     const installationDate = event.target.installationDate.value;
-
     // 先检查手机号和收据是否存在
     try {
       const checkResponse = await fetch("/api/userinfosubmission/check", {
