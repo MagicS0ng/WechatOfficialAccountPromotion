@@ -4,20 +4,6 @@ const Submission = require("../models/Submission");
 const submitService = require("../services/submitService");
 const QrCode = require("qrcode");
 
-async function handleGetUserQrCode(req, res)
-{
-  try {
-    const userId = req.query.userId;
-    const qrCodeImage = await submitService.generateQrCode(userId);
-    res.status(200).json({
-      qrCodeImage: qrCodeImage,
-    });
-  }catch(err)
-  {
-    res.status(403).json({message: "can not return a qrcode"});
-    console.log("can not return a qrcode")
-  }
-}
 async function handleGetUserPromotionInfo(req, res) {
   try {
     const { userPromotionInfo, userInfo } =
@@ -38,5 +24,4 @@ async function handleGetUserPromotionInfo(req, res) {
 }
 module.exports = {
   handleGetUserPromotionInfo,
-  handleGetUserQrCode
 };

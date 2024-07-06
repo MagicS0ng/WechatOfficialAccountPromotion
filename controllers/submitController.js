@@ -18,7 +18,6 @@ async function handleFormSubmission(req, res) {
     );
     await transaction.commit();
     console.log("create qrcode for current user");
-    await submitService.generateQrCode(submission.id);
     res.status(200).json({
       message: "Form submitted successfully!",
       submission,

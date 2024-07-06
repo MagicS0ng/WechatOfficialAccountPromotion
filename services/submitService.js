@@ -19,6 +19,7 @@ async function startTransaction()
  } 
 }
 async function generateQrCode(userId) {
+  console.log("generate qrcode for user: ", userId);
   const qrCodeDir = path.join(qrCodePathG, "userCode");
   const qrCodePath = path.join(qrCodeDir, `${userId}_qrcode.png`);
   // 如果二维码文件不存在，就生成并保存

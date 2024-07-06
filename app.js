@@ -9,8 +9,8 @@ const config = require("./config/config");
 const logger = require("./utils/logger");
 const sequelize = require("./config/database");
 const path = require('path');
-const generateQrCode = require('./services/submitService');
-
+const submitService = require('./services/submitService');
+const fs = require("fs");
 
 const app = express();
 app.use(bodyParser.json());
@@ -50,13 +50,19 @@ app.post(
   "/api/userinfosubmission/check",
   submitController.handleCheckSubmission
 );
-app.get("/api/generateqrcode", promotionController.handleGetUserQrCode);
 app.get(
   "/api/getuserpromotion",
   promotionController.handleGetUserPromotionInfo
 );
 app.get('/api/getQrCode/:filename', async (req, res) => {
   const imagePath = path.join(__dirname, 'userCode', req.params.filename);
+  const userId = req.params.filename.split("_")[0];
+  console.log(userId);
+  if(!fs.existsSync(imagePath))
+  {
+    console.log(imagePath)
+    await submitService.generateQrCode(userId);
+  }
   res.sendFile(imagePath);
 });
 app.listen(config.server.port, () => {

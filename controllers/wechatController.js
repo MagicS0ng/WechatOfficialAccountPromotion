@@ -3,7 +3,7 @@ const verifySignature = require("../utils/verifySignature");
 const logger = require("../utils/logger");
 const wechatService = require("../services/wechatService");
 const { checkUserHasSubmit } = require("../services/submitService");
-
+const submitService = require("../services/submitService");
 async function handleGetAccessToken(req, res) {
   try {
     const token = await wechatService.getAccessToken();
