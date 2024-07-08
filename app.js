@@ -78,7 +78,6 @@ app.get("/api/getQrCode/:filename", async (req, res) => {
 });
 app.get('/user/:userId', async (req, res) => {
   const userId = req.query.userId
-  console.log("Router",userId);
   res.redirect(`/promotion.html?userId=${encodeURIComponent(userId)}`);
 })
 app.listen(config.server.port, () => {

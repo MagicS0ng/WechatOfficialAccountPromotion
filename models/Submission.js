@@ -59,6 +59,7 @@ const PromotionInfo = sequelize.define(
      type: DataTypes.INTEGER,
      allowNull: false,
      unique:false,
+     defaultValue: 0,
     },
     withdrawable_amount:{
       type: DataTypes.DECIMAL(10, 2),
@@ -83,7 +84,7 @@ const PromotionRecord = sequelize.define(
     promoter_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
+      unique: false,
       references: { model: User, key: "id" },
     },
     promotee_phone:{

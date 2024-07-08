@@ -43,7 +43,6 @@ async function handleOAuthCallback(req, res) {
       tokenData.access_token,
       tokenData.openid
     );
-
     req.session.user = userInfo;
     const isSummitted = await checkUserHasSubmit(userInfo.openid);
     if (isSummitted) {

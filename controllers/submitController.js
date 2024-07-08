@@ -5,19 +5,14 @@ async function handleFormSubmission(req, res) {
   const openid = req.session.user.openid;
   const nickname = req.session.user.nickname;
   const { phone, receipt, installationDate } = req.body;
-  let transaction;
   try {
-    transaction = await submitService.startTransaction();
     const submission = await submitService.checkAndSaveSubmission(
       openid,
       phone,
       nickname,
       receipt,
       installationDate,
-      transaction
     );
-    await transaction.commit();
-    console.log("create qrcode for current user");
     res.status(200).json({
       message: "Form submitted successfully!",
       submission,
@@ -27,7 +22,6 @@ async function handleFormSubmission(req, res) {
     if(error.message=="Failed to generate or save QR Code")
       {
         res.status(500).json({ error: "Failed to generate or save QR Code" });
-        await transaction.rollback();
       }
     if (error.message === "Phone number already exists") {
       res.status(400).json({ error: "Phone number already exists" });

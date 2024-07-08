@@ -74,58 +74,57 @@ async function getUserInfo(accessToken, openId) {
         throw new Error('Failed to get user info');
     }
 }
-async function generateQRcodeTicketFromWXAPI(accessToken, userId) {
-    try {
-        console.log("scence_id", userId);
-        const url = `https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=${accessToken}`;
-        const requestData = {
-            action_name: 'QR_LIMIT_STR_SCENE',
-            action_info: {
-                scene: {
-                    scene_id: userId
-                }
-            }
-        };
-        const response = await axios.post(url, requestData);
-        return response.data.ticket;
-    } catch (error) {
-        logger.error(`Error getting ticket for generating QR code: ${error.message}`);
-        throw new Error('Error getting ticket for generating QR code');
-    }
-}
-async function generateQRcodeFromTicket(ticket) 
-{
-    try {
-        const response = await axios.get(`https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${ticket}`,
-            {responseType: 'arraybuffer'}
-        );
-        return response.data;
-    } catch (error) {
-        logger.error(`Error generating QR code from ticket: ${error.message}`);
-        throw new Error('Error generating QR code from ticket');
-    }
-}
-async function generateQrCode(uid)
-{
-    try {
-        const qrCodeDir = path.join(qrCodePathG, "userCode");
-        const qrCodePath = path.join(qrCodeDir, `user_${uid}`);
-        const token = await getAccessToken();
-        const ticket = await generateQRcodeTicketFromWXAPI(token, uid);
-        const qrcode = await generateQRcodeFromTicket(ticket);
-        fs.writeFileSync(qrCodePath, qrcode);
-        return qrcode;
-    }catch(error)
-    {
-        logger.error(`Error generating QR code: ${error.message}`);
-        throw new Error('Error generating QR code');
-    }
-}
+// async function generateQRcodeTicketFromWXAPI(accessToken, userId) {
+//     try {
+//         const url = `https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=${accessToken}`;
+//         const requestData = {
+//             action_name: 'QR_LIMIT_STR_SCENE',
+//             action_info: {
+//                 scene: {
+//                     scene_id: userId
+//                 }
+//             }
+//         };
+//         const response = await axios.post(url, requestData);
+//         return response.data.ticket;
+//     } catch (error) {
+//         logger.error(`Error getting ticket for generating QR code: ${error.message}`);
+//         throw new Error('Error getting ticket for generating QR code');
+//     }
+// }
+// async function generateQRcodeFromTicket(ticket) 
+// {
+//     try {
+//         const response = await axios.get(`https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${ticket}`,
+//             {responseType: 'arraybuffer'}
+//         );
+//         return response.data;
+//     } catch (error) {
+//         logger.error(`Error generating QR code from ticket: ${error.message}`);
+//         throw new Error('Error generating QR code from ticket');
+//     }
+// }
+// async function generateQrCode(uid)
+// {
+//     try {
+//         const qrCodeDir = path.join(qrCodePathG, "userCode");
+//         const qrCodePath = path.join(qrCodeDir, `user_${uid}`);
+//         const token = await getAccessToken();
+//         const ticket = await generateQRcodeTicketFromWXAPI(token, uid);
+//         const qrcode = await generateQRcodeFromTicket(ticket);
+//         fs.writeFileSync(qrCodePath, qrcode);
+//         return qrcode;
+//     }catch(error)
+//     {
+//         logger.error(`Error generating QR code: ${error.message}`);
+//         throw new Error('Error generating QR code');
+//     }
+// }
 
 module.exports = {
     getAccessToken,
     createMenu,
     getOAuthAccessToken,
     getUserInfo,
-    generateQrCode,
+    // generateQrCode,
 };

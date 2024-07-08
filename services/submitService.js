@@ -6,6 +6,7 @@ const qrCodePathG = require("../config/config").server.qrcode_path;
 const fs = require("fs");
 const path = require("path");
 const sequelize = require("../config/database");
+const logger = require("../utils/logger");
 
 async function startTransaction()
 {
@@ -19,14 +20,12 @@ async function startTransaction()
  } 
 }
 async function generateQrCode(userId) {
-  console.log("userId",userId);
   const qrCodeDir = path.join(qrCodePathG, "userCode");
   const qrCodePath = path.join(qrCodeDir, `${userId}_qrcode.png`);
   // 如果二维码文件不存在，就生成并保存
   if (!fs.existsSync(qrCodePath)) {
     try {
       const qrCodeData = `${url}/user/userId?userId=${encodeURIComponent(userId)}`; // 替换为实际的用户信息页面 URL
-      console.log("qrCodeData",qrCodeData);
       const qrCodeImage = await QrCode.toDataURL(qrCodeData);
       const base64Data = qrCodeImage.replace(/^data:image\/\w+;base64,/, '');
       // 将 base64 数据写入文件
@@ -78,24 +77,40 @@ async function checkAndSaveSubmission(
   receipt,
   installationDate
 ) {
-  await checkSubmissionExists(receipt);
-  // 存储信息到数据库
-  const newSubmission = await Submission.User.create({
-    openid: openid,
-    phone: phone,
-    receipt: receipt,
-    nickname: nickname,
-    installation_date: installationDate,
-  });
-  return newSubmission;
+  let transaction;
+  try {
+    transaction = await sequelize.transaction();
+    await checkSubmissionExists(receipt);
+    // 存储信息到数据库
+    const newSubmission = await Submission.User.create({
+      openid: openid,
+      phone: phone,
+      receipt: receipt,
+      nickname: nickname,
+      installation_date: installationDate,
+    },{transaction});
+    await Submission.PromotionInfo.create({
+      user_id: newSubmission.id,
+      promotion_count: 0,
+      withdrawable_amount: 0,
+      withdraw_expiry_date: newSubmission.expire_at,
+    }, {transaction});
+    await transaction.commit();
+    return newSubmission;
+  } catch (error) {
+    await transaction.rollback();
+    logger.error(
+      error,
+      "failed to submit user info while registering for promotion"
+    );
+    console.log(error);
+  }
 }
-
-
-async function checkPromoteeReceiptExist(receipt)
+async function checkPromoteeReceiptExist(receipt, transaction)
 {
   const existingReceipt = await Submission.PromotionRecord.findOne({
-    where: { receipt: receipt },
-  });
+    where: { receipt: receipt }, 
+  },{transaction});
   if (existingReceipt) {
     throw new Error("Receipt already exists");
   }
@@ -106,16 +121,18 @@ async function submitPromotionRecords(
   phone,
   receipt,
   installationDate,
+  transaction
 )
 {
-  console.log(`promoter_id: ${promoter_id}, phone: ${phone}, receipt: ${receipt}, installationDate: ${installationDate}`);
-  await checkPromoteeReceiptExist(receipt);
+  await checkSubmissionExists(receipt) 
+  await checkPromoteeReceiptExist(receipt,transaction);
   try {
     const newPromotion = await Submission.PromotionRecord.create({
       promoter_id: promoter_id,
       promotee_phone: phone,
       receipt: receipt,
       installation_date: installationDate,
+      transaction
     });
     return newPromotion;
   } catch (error) {

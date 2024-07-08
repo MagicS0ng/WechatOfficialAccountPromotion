@@ -40,7 +40,7 @@ document
 
       if (response.ok) {
         document.getElementById("successMessage").textContent = result.message;
-        document.getElementById("errorMessage").textContent = result.message;
+        // document.getElementById("errorMessage").textContent = result.message;
         // window.location.href = result.redirect;
       } else {
         document.getElementById("errorMessage").textContent = result.error;
