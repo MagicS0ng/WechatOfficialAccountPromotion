@@ -77,9 +77,49 @@ const PromotionInfo = sequelize.define(
     timestamps: false,
   }
 );
+const PromotionRecord = sequelize.define(
+  "PromotionRecord",
+  {
+    promoter_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+      references: { model: User, key: "id" },
+    },
+    promotee_phone:{
+     type: DataTypes.STRING(20),
+     allowNull: false,
+     unique:false,
+    },
+    receipt:{
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      unique:true,
+    },
+    installation_date:{
+      type: DataTypes.DATE,
+      allowNull: false,
+      unique:false,
+    },
+    promoted_date :{
+      type: DataTypes.DATE,
+      allowNull: false,
+      unique:false,
+      defaultValue:DataTypes.NOW
+    }
+  },
+  {
+    tableName: "promotion_records",
+    timestamps: false,
+  }
+);
+
 User.hasMany(PromotionInfo, { foreignKey: "user_id" });
+User.hasMany(PromotionRecord, { foreignKey: "promoter_id" });
 PromotionInfo.belongsTo(User, { foreignKey: "user_id" });
+PromotionRecord.belongsTo(User, { foreignKey: "promoter_id" });
 module.exports = {
   User,
-  PromotionInfo
+  PromotionInfo,
+  PromotionRecord
 };

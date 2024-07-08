@@ -3,7 +3,9 @@ const verifySignature = require("../utils/verifySignature");
 const logger = require("../utils/logger");
 const wechatService = require("../services/wechatService");
 const { checkUserHasSubmit } = require("../services/submitService");
-const submitService = require("../services/submitService");
+const url = require("../config/config").server.url;
+const xml2js = require("xml2js");
+const { error } = require("winston");
 async function handleGetAccessToken(req, res) {
   try {
     const token = await wechatService.getAccessToken();
@@ -54,10 +56,31 @@ async function handleOAuthCallback(req, res) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
-
+// async function handleScanEvent(req, res) {
+//   const parser = new xml2js.Parser();
+//   parser.parseString(req.body, (error, result) => {
+//     if (error) {
+//       logger.error(`Error in handleScanEvent: ${error.message}`);
+//       res.status(500).json({ error: "Internal Server Error" });
+//     }
+//     const message = result.xml;
+//     console.log(message);
+//     const eventKey = message.EventKey[0];
+//     const userId = toString(eventKey).split(".")[0];
+//     res.send(`
+//       <html>
+//       <body>
+//       <script>
+//         window.location.href = ${url}/promotion.html?userId=${userId}
+//       </script>
+//       </body>
+//       </html>`);
+//   });
+// }
 module.exports = {
   handleGetAccessToken,
   handleCreateMenu,
   handleVerifyServer,
   handleOAuthCallback,
+  // handleScanEvent,
 };

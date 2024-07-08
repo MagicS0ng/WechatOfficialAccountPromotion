@@ -9,13 +9,15 @@ const config = require("./config/config");
 const logger = require("./utils/logger");
 const sequelize = require("./config/database");
 const path = require('path');
-const submitService = require('./services/submitService');
+// const wechatService = require("./services/wechatService");
+const submitService = require("./services/submitService");
 const fs = require("fs");
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.raw({ type: 'text/xml' }));
 app.use(express.static("public"));
-app.use('/userQrCode', express.static('./userCode'));
+app.use("/userQrCode", express.static("./userCode"));
 app.use(errorHandler);
 app.use(
   session({
@@ -50,21 +52,35 @@ app.post(
   "/api/userinfosubmission/check",
   submitController.handleCheckSubmission
 );
+//  处理用户推广
+app.post("/api/promotionrecord/check", promotionController.handleCheckPromotion);
+app.post("/api/promotionrecord", promotionController.handleSubmitPromotion);
+
+// app.post("/wechat", wechatController.handleScanEvent);
 app.get(
   "/api/getuserpromotion",
   promotionController.handleGetUserPromotionInfo
 );
-app.get('/api/getQrCode/:filename', async (req, res) => {
-  const imagePath = path.join(__dirname, 'userCode', req.params.filename);
+app.get("/api/getQrCode/:filename", async (req, res) => {
+  const imagePath = path.join(__dirname, "userCode", req.params.filename);
   const userId = req.params.filename.split("_")[0];
-  console.log(userId);
-  if(!fs.existsSync(imagePath))
-  {
-    console.log(imagePath)
-    await submitService.generateQrCode(userId);
+  try {
+    if (!fs.existsSync(imagePath)) {
+      await submitService.generateQrCode(userId);
+    }
+    res.sendFile(imagePath);
+  } catch (err) {
+    logger.error(
+      `Error generating QR code while loading page: promotionInfo: ${err.message}`
+    );
+    console.log(err);
   }
-  res.sendFile(imagePath);
 });
+app.get('/user/:userId', async (req, res) => {
+  const userId = req.query.userId
+  console.log("Router",userId);
+  res.redirect(`/promotion.html?userId=${encodeURIComponent(userId)}`);
+})
 app.listen(config.server.port, () => {
   logger.info(`Server running on port ${config.server.port}`);
 });

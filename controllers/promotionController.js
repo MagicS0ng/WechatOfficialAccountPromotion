@@ -2,7 +2,6 @@
 const { error } = require("winston");
 const Submission = require("../models/Submission");
 const submitService = require("../services/submitService");
-const QrCode = require("qrcode");
 
 async function handleGetUserPromotionInfo(req, res) {
   try {
@@ -22,6 +21,43 @@ async function handleGetUserPromotionInfo(req, res) {
     console.log(err);
   }
 }
+
+async function handleCheckPromotion(req, res)
+{
+  try {
+      const { receipt } = req.body;
+      await submitService.checkPromoteeReceiptExist(receipt);
+      res.status(200).json({ message: "No duplicate found" });
+    } catch (error) {
+      if (error.message === "Receipt already exists") {
+        res.status(400).json({ error: "Receipt already exists" });
+      } else {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    }
+}
+async function handleSubmitPromotion(req, res)
+{
+    const { userId, phone, receipt, installationDate } = req.body;
+    try {
+      const submitPromotion = await submitService.submitPromotionRecords(
+        userId,
+        phone,
+        receipt,
+        installationDate
+      );
+      res.status(200).json({
+        success: true,
+        message: "谢谢帮我推广! 本次推广成功",
+        submitPromotion,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+      console.log(error);
+    }
+};
 module.exports = {
   handleGetUserPromotionInfo,
+  handleCheckPromotion,
+  handleSubmitPromotion
 };
