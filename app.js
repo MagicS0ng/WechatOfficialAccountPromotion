@@ -61,25 +61,8 @@ app.get(
   "/api/getuserpromotion",
   promotionController.handleGetUserPromotionInfo
 );
-app.get("/api/getQrCode/:filename", async (req, res) => {
-  const imagePath = path.join(__dirname, "userCode", req.params.filename);
-  const userId = req.params.filename.split("_")[0];
-  try {
-    if (!fs.existsSync(imagePath)) {
-      await submitService.generateQrCode(userId);
-    }
-    res.sendFile(imagePath);
-  } catch (err) {
-    logger.error(
-      `Error generating QR code while loading page: promotionInfo: ${err.message}`
-    );
-    console.log(err);
-  }
-});
-app.get('/user/:userId', async (req, res) => {
-  const userId = req.query.userId
-  res.redirect(`/promotion.html?userId=${encodeURIComponent(userId)}`);
-})
+app.get("/api/getQrCode/:filename", promotionController.handleGetUserQrCode);
+app.get('/user/:userId', promotionController.handleRedirectPromotion)
 app.listen(config.server.port, () => {
   logger.info(`Server running on port ${config.server.port}`);
 });

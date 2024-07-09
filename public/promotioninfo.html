@@ -23,16 +23,38 @@
             <strong>推广人数</strong>
             <span id="promotionCount"></span>
         </div>
-        <div class="info">
-            <strong>可提现￥</strong>
-            <span id="withdrawableAmount"></span>
-            <button type="button" id="withdrawButton" > 提现</button>
-        </div>
+      
         <div class="info">
             <strong>距过期</strong>
             <span>还有</span>
             <span id="expire_time"></span>
             <span>天</span>
+        </div>
+        <div class="info">
+            <strong>可提现￥</strong>
+            <span id="withdrawableAmount"></span>
+            <button type="button" id="withdrawButton" > 提现</button>
+            
+        </div>
+        <div id="withdraw-status" class="hidden">
+                <div id="withdrawProgress">
+                <div class="status-item" id="initiateWithdraw">
+                    <div class="status-icon"></div>
+                    <div class="status-text">发起提现</div>
+                </div>
+                <div class="status-item" id="reviewWithdraw">
+                    <div class="status-icon"></div>
+                    <div class="status-text">后台审核</div>
+                </div>
+                <div class="status-item" id="successWithdraw">
+                    <div class="status-icon"></div>
+                    <div class="status-text">提现成功</div>
+                </div>
+            </div>
+        </div>
+        <div id="withdraw-records"   class="hidden">
+            <h3>提现记录</h3>
+            <ul id="withdrawRecordsList"></ul>
         </div>
         <div class="qr-code">
             <strong>专属推广二维码</strong><br>
@@ -40,6 +62,7 @@
             <br>
             <span>(保存二维码到本地)</span>
         </div>
+       
         <div id="response"></div>
     </div>
 <div id="withdrawModal" class="modal">
@@ -47,7 +70,7 @@
       <span class="close">&times;</span>
       <h3 class="modal-title">提现失败</h3>
       <div class="modal-body">
-        <p>当前不可提现，您的账户余额不足。</p>
+        <p id="reminder"></p>
       </div>
     </div>
   </div>

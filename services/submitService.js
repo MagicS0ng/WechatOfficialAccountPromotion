@@ -26,6 +26,7 @@ async function generateQrCode(userId) {
   if (!fs.existsSync(qrCodePath)) {
     try {
       const qrCodeData = `${url}/user/userId?userId=${encodeURIComponent(userId)}`; // 替换为实际的用户信息页面 URL
+      console.log(qrCodeData);
       const qrCodeImage = await QrCode.toDataURL(qrCodeData);
       const base64Data = qrCodeImage.replace(/^data:image\/\w+;base64,/, '');
       // 将 base64 数据写入文件

@@ -4,6 +4,8 @@ const Submission = require("../models/Submission");
 const submitService = require("../services/submitService");
 const Sequelize = require("sequelize");
 const sequelize = require("../config/database");
+const path = require("path");
+const fs = require("fs");
 async function handleGetUserPromotionInfo(req, res) {
   try {
     const { userPromotionInfo, userInfo } =
@@ -59,7 +61,7 @@ async function handleSubmitPromotion(req, res) {
       where: { user_id: promoter_id },transaction
     }, );
     const promotion_count = promotionInfo.dataValues.promotion_count;
-    const newWithDrawableAmount = Number(promotion_count) * 10;
+    const newWithDrawableAmount = Number(promotion_count) * 1010;
     await Submission.PromotionInfo.update(
       { withdrawable_amount: newWithDrawableAmount.toFixed(2).toString() },
       { where: { user_id: promoter_id }, transaction },
@@ -80,8 +82,28 @@ async function handleSubmitPromotion(req, res) {
     console.log(error);
   }
 };
+async function handleRedirectPromotion(req, res){
+  const userId = req.query.userId;
+  res.redirect(`/promotion.html?userId=${encodeURIComponent(userId)}`);
+};
+async function handleGetUserQrCode(req, res){
+  const imagePath = path.join("F:\\CNS\\", "userCode", req.params.filename);
+  console.log(imagePath);
+  const userId = req.params.filename.split("_")[0];
+  try {
+    if (!fs.existsSync(imagePath)) {
+      await submitService.generateQrCode(userId);
+    }
+    res.sendFile(imagePath);
+  } catch (err) {
+    res.status(500).send("Error generating QR code");
+    console.log(err);
+  }
+}
 module.exports = {
   handleGetUserPromotionInfo,
   handleCheckPromotion,
-  handleSubmitPromotion
+  handleSubmitPromotion,
+  handleRedirectPromotion,
+  handleGetUserQrCode
 };

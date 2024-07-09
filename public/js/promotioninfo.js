@@ -21,23 +21,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("withdrawableAmount").textContent =
           result.userPromotionInfo.withdrawable_amount;
         document.getElementById("expire_time").textContent = result.diffDays;
-        document.getElementById("withdrawButton").addEventListener("click",  function () {
-            var withdrawable_amount = result.userPromotionInfo.withdrawable_amount;
-            if(withdrawable_amount<=0)
-            {
-                modal.style.display = "block";
-            }
+        document.getElementById("withdrawButton").addEventListener("click", function () {
+          handleWithdrawRequest(result.userPromotionInfo.withdrawable_amount);
         });
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
         
-        // 当用户点击模态框以外的区域时关闭模态框
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
       } else {
         document.getElementById("response").textContent =
           "Error: " + response.statusText;
@@ -49,4 +36,69 @@ document.addEventListener("DOMContentLoaded", async function () {
   } else {
     document.getElementById("response").textContent = "无效用户";
   }
+});
+function setProgressVisible()
+{
+  var progressDiv = document.querySelectorAll('.hidden');
+  progressDiv.forEach(function(div){div.classList.toggle('hidden')})
+}
+function handleWithdrawRequest(withdrawableAmount) {
+  var modal = document.getElementById('withdrawModal');
+  if (withdrawableAmount <= 0) {
+    // showModal("当前不可提现，您的账户余额不足。");
+    showModal("当前不可提现，您的账户余额不足。");
+    return ;
+  } 
+  if (withdrawableAmount < 100) {
+    // showModal("可提现金额满一百可提现");
+    showModal("可提现金额满一百可提现");
+    return ;
+  }
+  setProgressVisible();
+  /** TODO
+   * 1. 若满足提现要求，向后端发送提现请求
+   * 2. 后端返回结果，设置提现状态，同时后端发送一条信息到公众号管理员，通知管理员提现
+   * 3. 前端根据结果显示提现状态
+   * 4. 管理员审核通过，后端向前端发送审核成功或失败，更新提现状态，若成功则调用api提现，
+   */
+}
+
+显示模态框并设置提醒文本
+function showModal(reminderText) {
+  var modal = document.getElementById('withdrawModal');
+  var span = document.getElementsByClassName('close')[0];
+  document.getElementById("reminder").textContent = reminderText;
+  modal.style.display = "block";
+
+  // 关闭模态框
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+
+  // 当用户点击模态框以外的区域时关闭模态框
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+}
+function updateWithdrawStatus(statusId) {
+  const statuses = ['initiateWithdraw', 'reviewWithdraw', 'successWithdraw', 'failureWithDraw'];
+  statuses.forEach(id => {
+      document.getElementById(id).style.backgroundColor = (id === statusId) ? '#4CAF50' : '#fff';
+  });
+}
+
+function addWithdrawRecord(record) {
+  const recordList = document.getElementById('withdrawRecordsList');
+  const listItem = document.createElement('li');
+  listItem.textContent = `提现金额：${record.amount} 元，时间：${record.date}`;
+  recordList.appendChild(listItem);
+}
+
+
+
+// 添加关闭模态框的功能
+document.querySelector('.close').addEventListener('click', function() {
+  document.getElementById('withdrawModal').style.display = 'none';
 });
