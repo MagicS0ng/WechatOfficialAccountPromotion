@@ -1,3 +1,12 @@
+async function checkPendingWithdrawal(userId)
+{
+  var response = await fetch(`/api/getPendingWithdrawState?userId=${userId}`);
+  var result = await response.json();
+  return {
+    expired: result.isExpired,
+    exist: result.isExist
+  };
+}
 document.addEventListener("DOMContentLoaded", async function () {
   var urlParams = new URLSearchParams(window.location.search);
   const userId = urlParams.get("userId");
@@ -9,6 +18,10 @@ document.addEventListener("DOMContentLoaded", async function () {
       const response = await fetch(`/api/getuserpromotion?userId=${userId}`);
       if (response.ok) {
         const result = await response.json();
+        const checkPending = await fetch(`/api/getPendingWithdrawState?userId=${userId}`);
+        const checkPendingResult = await checkPending.json();
+        const isExpired = checkPendingResult.isExpired;
+        const isExist = checkPendingResult.isExist;
         document.getElementById(
           "qrCodeImage"
         ).src = `/api/getQrCode/${userId}_qrcode.png`;
@@ -21,8 +34,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("withdrawableAmount").textContent =
           result.userPromotionInfo.withdrawable_amount;
         document.getElementById("expire_time").textContent = result.diffDays;
-        document.getElementById("withdrawButton").addEventListener("click", function () {
-          handleWithdrawRequest(result.userPromotionInfo.withdrawable_amount);
+        if(!isExpired && isExist)
+        {
+          setProgressVisible();
+        }
+        document.getElementById("withdrawButton").addEventListener("click", async function () {
+         await handleWithdrawRequest(result.userPromotionInfo.withdrawable_amount, userId,isExpired);
         });
         
       } else {
@@ -42,7 +59,8 @@ function setProgressVisible()
   var progressDiv = document.querySelectorAll('.hidden');
   progressDiv.forEach(function(div){div.classList.toggle('hidden')})
 }
-function handleWithdrawRequest(withdrawableAmount) {
+
+async function handleWithdrawRequest(withdrawableAmount, userId,isExpired) {
   var modal = document.getElementById('withdrawModal');
   if (withdrawableAmount <= 0) {
     // showModal("当前不可提现，您的账户余额不足。");
@@ -54,7 +72,13 @@ function handleWithdrawRequest(withdrawableAmount) {
     showModal("可提现金额满一百可提现");
     return ;
   }
+  if(isExpired)
+  {
+    showModal("该用户的提现申请已过期");
+    return ;
+  }
   setProgressVisible();
+  await fetch(`/api/submitwithdrawal?userId=${userId}`);
   /** TODO
    * 1. 若满足提现要求，向后端发送提现请求
    * 2. 后端返回结果，设置提现状态，同时后端发送一条信息到公众号管理员，通知管理员提现
@@ -63,7 +87,7 @@ function handleWithdrawRequest(withdrawableAmount) {
    */
 }
 
-显示模态框并设置提醒文本
+//显示模态框并设置提醒文本
 function showModal(reminderText) {
   var modal = document.getElementById('withdrawModal');
   var span = document.getElementsByClassName('close')[0];
@@ -83,10 +107,7 @@ function showModal(reminderText) {
   }
 }
 function updateWithdrawStatus(statusId) {
-  const statuses = ['initiateWithdraw', 'reviewWithdraw', 'successWithdraw', 'failureWithDraw'];
-  statuses.forEach(id => {
-      document.getElementById(id).style.backgroundColor = (id === statusId) ? '#4CAF50' : '#fff';
-  });
+  const statuses = ['init', 'review', 'success', 'failure'];
 }
 
 function addWithdrawRecord(record) {
