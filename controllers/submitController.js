@@ -2,10 +2,10 @@
 const submitService = require("../services/submitService");
 
 async function handleFormSubmission(req, res) {
-  const openid = req.session.user.openid;
-  const nickname = req.session.user.nickname;
-  const { phone, receipt, installationDate } = req.body;
   try {
+    const openid = req.session.user.openid;
+    const nickname = req.session.user.nickname;
+    const { phone, receipt, installationDate } = req.body;
     const submission = await submitService.checkAndSaveSubmission(
       openid,
       phone,

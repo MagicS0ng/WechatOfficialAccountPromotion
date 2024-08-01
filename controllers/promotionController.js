@@ -1,4 +1,5 @@
 // controllers/promotionController.js
+
 const { error } = require("winston");
 const Submission = require("../models/Submission");
 const submitService = require("../services/submitService");
@@ -12,9 +13,10 @@ async function handleGetUserPromotionInfo(req, res) {
       await submitService.getSubmissionByUserId(req.query.userId);
     let installation_date = new Date(userInfo.installation_date);
     let expire_date = new Date(userPromotionInfo.withdraw_expiry_date);
-    let timdDiff = Math.abs(
-      expire_date.getTime() - installation_date.getTime()
-    );
+    // let timdDiff = Math.abs(
+    //   expire_date.getTime() - installation_date.getTime()
+    // );
+    let timdDiff = expire_date.getTime() - installation_date.getTime();
     let diffDays = Math.ceil(timdDiff / (1000 * 60 * 60 * 24));
     res.status(200).json({
       userPromotionInfo,
@@ -88,7 +90,6 @@ async function handleRedirectPromotion(req, res){
 };
 async function handleGetUserQrCode(req, res){
   const imagePath = path.join("F:\\CNS\\", "userCode", req.params.filename);
-  console.log(imagePath);
   const userId = req.params.filename.split("_")[0];
   try {
     if (!fs.existsSync(imagePath)) {
