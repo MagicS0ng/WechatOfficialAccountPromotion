@@ -32,40 +32,45 @@ const User = sequelize.define(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    expire_at: {
+    expired_at: {
       type: DataTypes.DATE,
     },
   },
   {
     tableName: "users",
-    timestamps: false,
+    timestamps: true,
     hooks: {
       beforeCreate: async (user, options) => {
-        user.expire_at = sequelize.literal("CURRENT_DATE + INTERVAL 1 YEAR");
+        if (!user.expired_at) {
+          user.expired_at = new Date(user.submitted_at).setFullYear(new Date(user.submitted_at).getFullYear() + 1);
+        }
       },
     },
   }
 );
+
 const PromotionInfo = sequelize.define(
-  "UserPromotionInfo",
+  "PromotionInfo",
   {
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       unique: true,
       references: { model: User, key: "id" },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
-    promotion_count:{
-     type: DataTypes.INTEGER,
-     allowNull: false,
-     unique:false,
-     defaultValue: 0,
+    promotion_count: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: false,
+      defaultValue: 0,
     },
-    withdrawable_amount:{
+    withdrawable_amount: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
-      unique:false,
-      defaultValue:0
+      unique: false,
+      defaultValue: 0,
     },
     withdraw_expiry_date:{
       type: DataTypes.DATE,
@@ -74,10 +79,11 @@ const PromotionInfo = sequelize.define(
     }
   },
   {
-    tableName: "promotions",
-    timestamps: false,
+    tableName: "promotionInfo",
+    timestamps: true,
   }
 );
+
 const PromotionRecord = sequelize.define(
   "PromotionRecord",
   {
@@ -86,41 +92,104 @@ const PromotionRecord = sequelize.define(
       allowNull: false,
       unique: false,
       references: { model: User, key: "id" },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
     },
-    promotee_phone:{
-     type: DataTypes.STRING(20),
-     allowNull: false,
-     unique:false,
+    promotee_phone: {
+      type: DataTypes.STRING(20),
+      allowNull: false,
+      unique: false,
     },
-    receipt:{
+    receipt: {
       type: DataTypes.STRING(255),
       allowNull: false,
-      unique:true,
+      unique: true,
     },
-    installation_date:{
+    installation_date: {
       type: DataTypes.DATE,
       allowNull: false,
-      unique:false,
+      unique: false,
     },
-    promoted_date :{
+    promoted_date: {
       type: DataTypes.DATE,
       allowNull: false,
-      unique:false,
-      defaultValue:DataTypes.NOW
-    }
+      unique: false,
+      defaultValue: DataTypes.NOW,
+    },
   },
   {
     tableName: "promotion_records",
-    timestamps: false,
+    timestamps: true,
   }
 );
 
-User.hasMany(PromotionInfo, { foreignKey: "user_id" });
-User.hasMany(PromotionRecord, { foreignKey: "promoter_id" });
-PromotionInfo.belongsTo(User, { foreignKey: "user_id" });
-PromotionRecord.belongsTo(User, { foreignKey: "promoter_id" });
+const Withdrawals = sequelize.define(
+  "Withdrawals",
+  {
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: false,
+      references: { model: User, key: "id" },
+      onDelete: "CASCADE",
+      onUpdate: "CASCADE",
+    },
+    amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      unique: false,
+    },
+    request_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      unique: false,
+      defaultValue: DataTypes.NOW,
+    },
+    review_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      unique: false,
+    },
+    transaction_id: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: true,
+    },
+    status: {
+      type: DataTypes.ENUM("pending", "approved", "rejected", "expired"),
+      allowNull: false,
+      unique: false,
+      defaultValue: "pending",
+    },
+    reviewer: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      unique: false,
+    },
+    remark: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      unique: false,
+    },
+  },
+  {
+    tableName: "withdrawals",
+    timestamps: true,
+  }
+);
+
+(async () => {
+  try {
+    await sequelize.sync({ force: false });
+    console.log("Sync complete!");
+  } catch (error) {
+    console.error("Error during sync:", error);
+  }
+})();
+
 module.exports = {
   User,
   PromotionInfo,
-  PromotionRecord
+  PromotionRecord,
+  Withdrawals,
 };
