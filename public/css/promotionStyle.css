@@ -131,18 +131,18 @@ body {
   line-height: 1.5;
 }
 
-#withdraw-status {
+/* #withdraw-status {
   margin-top: 20px;
   text-align: center;
-}
+} */
 
-#withdrawProgress {
+/* #withdrawProgress {
   display: flex;
   justify-content: space-around;
   padding: 10px 0;
-}
+} */
 
-.status-item {
+/* .status-item {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -159,7 +159,7 @@ body {
 .status-text {
   font-size: 14px;
   color: #666;
-}
+} 
 
 .active .status-icon {
   background-color: #4CAF50;
@@ -168,7 +168,49 @@ body {
 .active .status-text {
   color: #4CAF50;
 }
+*/
 
+.progress-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  filter: grayscale(100%);
+}
+
+.step-label {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.progress-bar {
+  height: 4px;
+  width: 50px;
+  background-color: #ddd;
+}
+
+.progress-step.pending .step-icon {
+  filter: grayscale(0%);
+}
+
+.progress-step.success .step-icon {
+  filter: grayscale(0%);
+}
+
+.progress-bar.pending,
+.progress-bar.success {
+  background-color: #07c160;
+}
 .withdraw-records {
   margin-top: 20px;
   text-align: left;

@@ -36,19 +36,21 @@
             <button type="button" id="withdrawButton" > 提现</button>
             
         </div>
-        <div id="withdraw-status" class="hidden">
-                <div id="withdrawProgress">
-                <div class="status-item" id="initiateWithdraw">
-                    <div class="status-icon"></div>
-                    <div class="status-text">发起提现</div>
+        <div id="progress-container" class="hidden">
+            <div class="progress-container">
+                <div class="progress-step" id="step-1">
+                    <img src="pending.svg" id="step-icon-1" class="step-icon" alt="发起">
+                    <div class="step-label">发起</div>
                 </div>
-                <div class="status-item" id="reviewWithdraw">
-                    <div class="status-icon"></div>
-                    <div class="status-text">后台审核</div>
+                <div class="progress-bar" id="bar-1"></div>
+                <div class="progress-step" id="step-2">
+                    <img src="pending.svg" id="step-icon-2" class="step-icon" alt="审核中">
+                    <div class="step-label">审核中</div>
                 </div>
-                <div class="status-item" id="successWithdraw">
-                    <div class="status-icon"></div>
-                    <div class="status-text">提现成功</div>
+                <div class="progress-bar" id="bar-2"></div>
+                <div class="progress-step" id="step-3">
+                    <img src="pending.svg" id="step-icon-3" class="step-icon" alt="审核通过">
+                    <div class="step-label">审核通过</div>
                 </div>
             </div>
         </div>
@@ -62,7 +64,6 @@
             <br>
             <span>(保存二维码到本地)</span>
         </div>
-       
         <div id="response"></div>
     </div>
 <div id="withdrawModal" class="modal">

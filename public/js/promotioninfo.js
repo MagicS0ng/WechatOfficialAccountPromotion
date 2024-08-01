@@ -1,3 +1,4 @@
+updateWithdrawStatus("pending");
 async function checkPendingWithdrawal(userId)
 {
   var response = await fetch(`/api/getPendingWithdrawState?userId=${userId}`);
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if(!isExpired && isExist)
         {
           setProgressVisible();
+          updateWithdrawStatus(1);
         }
         document.getElementById("withdrawButton").addEventListener("click", async function () {
          await handleWithdrawRequest(result.userPromotionInfo.withdrawable_amount, userId,isExpired);
@@ -78,6 +80,7 @@ async function handleWithdrawRequest(withdrawableAmount, userId,isExpired) {
     return ;
   }
   setProgressVisible();
+  updateWithdrawStatus(1);
   await fetch(`/api/submitwithdrawal?userId=${userId}`);
   /** TODO
    * 1. 若满足提现要求，向后端发送提现请求
@@ -106,9 +109,41 @@ function showModal(reminderText) {
     }
   }
 }
-function updateWithdrawStatus(statusId) {
-  const statuses = ['init', 'review', 'success', 'failure'];
+function updateWithdrawStatus(currentStep) {
+  const steps = document.querySelectorAll('.progress-step');
+  
+  steps.forEach((step, index) => {
+    const img = step.querySelector('.step-icon');
+
+    // 将所有步骤重置为初始状态
+    step.classList.remove('success', 'pending');
+
+    if (index < currentStep) {
+      // 将当前步骤之前的步骤标记为成功，并更新图标
+      step.classList.add('success');
+      img.src = 'success.svg';
+    } else if (index === currentStep) {
+      // 将当前步骤标记为待处理，并更新图标
+      step.classList.add('pending');
+      img.src = 'pending.svg';
+    } else {
+      // 将当前步骤之后的步骤保持为灰色的pending.svg
+      img.src = 'pending.svg';
+    }
+  });
+
+  // 更新进度条颜色
+  const bars = document.querySelectorAll('.progress-bar');
+  bars.forEach((bar, index) => {
+    bar.classList.remove('pending', 'success');
+    if (index < currentStep - 1) {
+      bar.classList.add('success');
+    } else {
+      bar.classList.add('pending');
+    }
+  });
 }
+
 
 function addWithdrawRecord(record) {
   const recordList = document.getElementById('withdrawRecordsList');
