@@ -4,6 +4,7 @@ const session = require("express-session");
 const wechatController = require("./controllers/wechatController");
 const submitController = require("./controllers/submitController");
 const promotionController = require("./controllers/promotionController");
+const withdrawalController = require("./controllers/withdrawalController")
 const errorHandler = require("./middlewares/errorHandler");
 const config = require("./config/config");
 const logger = require("./utils/logger");
@@ -61,6 +62,9 @@ app.get(
   "/api/getuserpromotion",
   promotionController.handleGetUserPromotionInfo
 );
+app.get("/api/getPendingWithdrawState", withdrawalController.handleisExistPendingWithdraw);
+app.get("/api/submitwithdrawal", withdrawalController.handlesubmitWithdrawl);
+// app.get("/api/getWithdrawState", withdrawalController.handleWithdrawRecords);
 app.get("/api/getQrCode/:filename", promotionController.handleGetUserQrCode);
 app.get('/user/:userId', promotionController.handleRedirectPromotion)
 app.listen(config.server.port, () => {
