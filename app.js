@@ -10,7 +10,7 @@ const config = require("./config/config");
 const logger = require("./utils/logger");
 const { initialize } = require("./models/init");
 const adminController = require("./controllers/adminController");
-
+const recordManageController = require("./controllers/recordManageController");
 (async () => {
   try {
     await initialize();
@@ -19,10 +19,17 @@ const adminController = require("./controllers/adminController");
     console.error("Error during sync:", error);
   }
 })();
-
+adminController
+  .createSuperAdmin("superadmin")
+  .then(() => {
+    console.log("创建一个超级管理员");
+  })
+  .catch((error) => {
+    console.error("创建超级管理员失败", error);
+  });
 const app = express();
 app.use(bodyParser.json());
-app.use(express.raw({ type: 'text/xml' }));
+app.use(express.raw({ type: "text/xml" }));
 app.use(express.static("public"));
 app.use("/userQrCode", express.static("./userCode"));
 app.use(errorHandler);
@@ -52,7 +59,10 @@ app.post(
   submitController.handleCheckSubmission
 );
 //  处理用户推广
-app.post("/api/promotionrecord/check", promotionController.handleCheckPromotion);
+app.post(
+  "/api/promotionrecord/check",
+  promotionController.handleCheckPromotion
+);
 app.post("/api/promotionrecord", promotionController.handleSubmitPromotion);
 
 // app.post("/wechat", wechatController.handleScanEvent);
@@ -60,22 +70,28 @@ app.get(
   "/api/getuserpromotion",
   promotionController.handleGetUserPromotionInfo
 );
-app.get("/api/getPendingWithdrawState", withdrawalController.handleisExistPendingWithdraw);
+app.get(
+  "/api/getPendingWithdrawState",
+  withdrawalController.handleisExistPendingWithdraw
+);
 app.get("/api/submitwithdrawal", withdrawalController.handlesubmitWithdrawl);
 // app.get("/api/getWithdrawState", withdrawalController.handleWithdrawRecords);
 app.get("/api/getQrCode/:filename", promotionController.handleGetUserQrCode);
-app.get('/user/:userId', promotionController.handleRedirectPromotion)
+app.get("/user/:userId", promotionController.handleRedirectPromotion);
 
 // 管理员登录、注册的路由
 app.post("/api/admin/register", adminController.registerAdmin);
-app.post("/api/admin/login", adminController.loginAdmin);;
+app.post("/api/admin/login", adminController.loginAdmin);
 app.get("/admin/register", async (req, res) => {
   res.sendFile(__dirname + "/public/register.html");
 });
 app.get("/admin/login", async (req, res) => {
   res.sendFile(__dirname + "/public/login.html");
 });
-
+app.get("/admin/dashboard", (req, res) => {
+  res.sendFile(__dirname + "/public/dashboard.html");
+});
+app.get("/api/admin/fetchrecords", recordManageController.fetchRecords);
 app.listen(config.server.port, () => {
   logger.info(`Server running on port ${config.server.port}`);
 });
