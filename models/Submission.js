@@ -177,7 +177,8 @@ const Withdrawals = sequelize.define(
     timestamps: true,
   }
 );
-
+User.hasMany(Withdrawals, { foreignKey: "user_id" });
+Withdrawals.belongsTo(User, { foreignKey: "user_id" });
 module.exports = {
   User,
   PromotionInfo,
