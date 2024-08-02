@@ -1,0 +1,103 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 80%;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+#withdrawalsList {
+  margin-top: 20px;
+}
+
+.withdrawal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.withdrawal-item:last-child {
+  border-bottom: none;
+}
+
+.withdrawal-item span {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.withdrawal-item input[type="text"] {
+  flex: 2;
+  margin-right: 10px;
+  padding: 5px;
+}
+
+.withdrawal-item select {
+  flex: 1;
+  margin-right: 10px;
+  padding: 5px;
+}
+
+.withdrawal-item button {
+  margin-right: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.withdrawal-item button.sync {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.withdrawal-item button.sync:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.pagination button:disabled {
+  background-color: #aaa;
+}
+
+.pagination span {
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+.pagination input {
+  width: 60px;
+  padding: 5px;
+  margin-left: 10px;
+}

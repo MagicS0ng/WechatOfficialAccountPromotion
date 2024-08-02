@@ -11,7 +11,7 @@ document.getElementById('admin-register-form').addEventListener('submit', functi
   }
 
   // 发送 AJAX 请求到服务器注册管理员
-  fetch('/admin/register', {
+  fetch('/api/admin/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

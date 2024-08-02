@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Withdrawals Management</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Withdrawals Management</h1>
+    <div id="withdrawalsList"></div>
+    <div class="pagination">
+      <button id="prevPage" onclick="changePage(-1)" disabled>Previous</button>
+      <span id="pageInfo"></span>
+      <button id="nextPage" onclick="changePage(1)" disabled>Next</button>
+      <input type="number" id="jumpToPage" min="1" placeholder="Page #">
+      <button onclick="jumpToPage()">Go</button>
+    </div>
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

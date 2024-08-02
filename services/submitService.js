@@ -130,7 +130,21 @@ async function submitPromotionRecords(
     throw new Error("promotion record submitted failed");    
   }
 }
-
+async function fetchWithdrawalsWithSelectedColumns() {
+  try {
+    const result = await Submission.Withdrawals.findAll({
+      include: [{
+        model: Submission.User,
+        attributes: ['phone', 'nickname']
+      }],
+      attributes: ['status','amount','request_date'],
+    });
+    return result;
+  } catch (error) {
+    console.error('Error fetching withdrawals with selected columns:', error);
+    throw error;
+  }
+}
 module.exports = {
   checkSubmissionExists,
   checkAndSaveSubmission,
@@ -138,5 +152,6 @@ module.exports = {
   getSubmissionByUserId,
   generateQrCode,
   checkPromoteeReceiptExist,
-  submitPromotionRecords
+  submitPromotionRecords,
+  fetchWithdrawalsWithSelectedColumns
 };
