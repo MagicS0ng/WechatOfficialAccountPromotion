@@ -5,7 +5,7 @@ document.getElementById('admin-login-form').addEventListener('submit', function(
 
   // 这里应该发送 AJAX 请求到服务器验证管理员信息
   // 假设我们使用 fetch API 发送请求
-  fetch('/admin/login', {
+  fetch('/api/admin/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

@@ -2,16 +2,25 @@ const bcrypt = require('bcrypt');
 const Admin = require('../models/admin');
 const Role = require('../models/role');
 
-exports.createSuperAdmin = async () => {
-  const superAdminRole = await Role.findOne({ where: { name: 'superadmin' } });
-  const superAdmin = await Admin.findOne({ where: { roleId: superAdminRole.id } });
-  if (!superAdmin) {
-    const hashedPassword = await bcrypt.hash('superadminpassword', 10);
-    await Admin.create({
-      username: 'superadmin',
-      password: hashedPassword,
-      roleId: superAdminRole.id
+exports.createSuperAdmin = async (authorizationCode) => {
+  try {
+    const superAdminRole = await Role.findOne({
+      where: { name: "superadmin" },
     });
+    const superAdmin = await Admin.findOne({
+      where: { roleId: superAdminRole.id },
+    });
+    if (!superAdmin) {
+      const hashedPassword = await bcrypt.hash("superadminpassword", 10);
+      await Admin.create({
+        username: "superadmin",
+        password: hashedPassword,
+        roleId: superAdminRole.id,
+        authorizationCode: authorizationCode,
+      });
+    }
+  } catch (error) {
+    throw new Error("Error creating super admin " + error);
   }
 };
 
@@ -33,7 +42,14 @@ exports.registerAdmin = async (req, res) => {
     roleId: adminRole.id
   });
 
-  res.status(201).json({ message: 'Admin registered successfully' });
+  res.status(201).json({success:true, message: 'Admin registered successfully' });
+};
+
+exports.loginAdmin = async (req, res) => {
+  console.log("admin logging..");
+  res.status(200).json({ 
+    success: true,
+    message: 'Admin logged in successfully' });
 };
 exports.updateAuthorizationCode = async (req, res) => {
   const { newAuthorizationCode } = req.body;
