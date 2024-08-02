@@ -1,4 +1,3 @@
-updateWithdrawStatus("pending");
 async function checkPendingWithdrawal(userId)
 {
   var response = await fetch(`/api/getPendingWithdrawState?userId=${userId}`);
@@ -38,7 +37,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         if(!isExpired && isExist)
         {
           setProgressVisible();
-          updateWithdrawStatus(1);
+          updateWithdrawStatus(1, false);
+        }
+        if(isExpired)
+        {
+          setProgressVisible();
+          updateWithdrawStatus(0, true);
         }
         document.getElementById("withdrawButton").addEventListener("click", async function () {
          await handleWithdrawRequest(result.userPromotionInfo.withdrawable_amount, userId,isExpired);
@@ -76,11 +80,12 @@ async function handleWithdrawRequest(withdrawableAmount, userId,isExpired) {
   }
   if(isExpired)
   {
-    showModal("该用户的提现申请已过期");
+    showModal("您的提现申请已过期");
+    updateWithdrawStatus(0, true);
     return ;
   }
   setProgressVisible();
-  updateWithdrawStatus(1);
+  updateWithdrawStatus(1, false);
   await fetch(`/api/submitwithdrawal?userId=${userId}`);
   /** TODO
    * 1. 若满足提现要求，向后端发送提现请求
@@ -109,9 +114,19 @@ function showModal(reminderText) {
     }
   }
 }
-function updateWithdrawStatus(currentStep) {
+function updateWithdrawStatus(currentStep, isExpired) {
   const steps = document.querySelectorAll('.progress-step');
   
+  if (isExpired) {
+    // 如果是 expired 状态，将所有步骤图标置为 failure.svg
+    steps.forEach(step => {
+      const img = step.querySelector('.step-icon');
+      img.src = '../failure.svg';
+    });
+    // 退出函数，不再进行其他更新
+    return;
+  }
+
   steps.forEach((step, index) => {
     const img = step.querySelector('.step-icon');
 
@@ -143,6 +158,7 @@ function updateWithdrawStatus(currentStep) {
     }
   });
 }
+
 
 
 function addWithdrawRecord(record) {

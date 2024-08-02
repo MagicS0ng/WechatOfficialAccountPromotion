@@ -1,5 +1,6 @@
 const { format } = require("mysql");
-const Submission = require("../models/Submission")
+const Submission = require("../models/Submission");
+const sequelize = require("../config/database");
 async function checkExpired(userId) {
   const formattedNow = (new Date()).toISOString();
   var expired_time = await Submission.PromotionInfo.findOne({
@@ -29,7 +30,34 @@ async function checkPending(userId)
     throw new Error("checkPending error");
   }
 }
+async function setStateExpired(userId)
+{
+  let transaction;
+  console.log("set status to expired");
+  try {
+    transaction = await sequelize.transaction();
+    await Submission.Withdrawals.update(
+      {
+        status: "expired",
+      },
+      {
+        where: {
+          user_id: userId,
+          status: "pending"
+        },
+        transaction,
+      }
+    );
+    transaction.commit();
+  } catch (error) {
+    if(transaction)
+      transaction.rollback();
+    console.log(error);
+    throw new Error("setStateExpired error");
+  }
+}
 module.exports = {
   checkExpired,
-  checkPending
+  checkPending,
+  setStateExpired
 }

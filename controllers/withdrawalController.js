@@ -1,6 +1,6 @@
 const sequelize = require("../config/database");
 const Submission = require("../models/Submission");
-const { checkExpired, checkPending } = require("../services/withdrawalsService");
+const { checkExpired, checkPending, setStateExpired } = require("../services/withdrawalsService");
 async function handleisExistPendingWithdraw(req, res) { //查看当前userId下有没有审核中的提现记录
   const userId = req.query.userId;
   const isExpired = await checkExpired(userId);
@@ -11,6 +11,7 @@ async function handleisExistPendingWithdraw(req, res) { //查看当前userId下�
       isExist: false,
       message: "该用户不存在正在进行中的提现申请（提现已过期）",
     });
+    await setStateExpired(userId);
     return ;
   }
   try {
