@@ -8,11 +8,16 @@ const withdrawalController = require("./controllers/withdrawalController")
 const errorHandler = require("./middlewares/errorHandler");
 const config = require("./config/config");
 const logger = require("./utils/logger");
-const sequelize = require("./config/database");
-const path = require('path');
-// const wechatService = require("./services/wechatService");
-const submitService = require("./services/submitService");
-const fs = require("fs");
+const { initialize } = require("./models/init");
+
+(async () => {
+  try {
+    await initialize();
+    console.log("Sync complete!");
+  } catch (error) {
+    console.error("Error during sync:", error);
+  }
+})();
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,14 +33,14 @@ app.use(
     cookie: { secure: false }, // 在生产环境中应设置为true，使用https
   })
 );
-sequelize
-  .sync()
-  .then(() => {
-    logger.info("Database synchronized");
-  })
-  .catch((err) => {
-    logger.error(`Database synchronization error: ${err.message}`);
-  });
+// sequelize
+//   .sync()
+//   .then(() => {
+//     logger.info("Database synchronized");
+//   })
+//   .catch((err) => {
+//     logger.error(`Database synchronization error: ${err.message}`);
+//   });
 // 微信服务器验证
 app.get("/wechat", wechatController.handleVerifyServer);
 

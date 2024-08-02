@@ -21,3 +21,33 @@
 6. 用户已登记，跳转到推广页面
 7. 其他用户扫描该用户的推广二维码，并填写安装回执，视为本次推广成功，该用户的推广人数+1，
 8. 推广成功后，该用户可以申请提现，提现成功后，该用户可以查看提现记录，提现记录中应显示提现时间，提现金额，提现状态，提现状态包括：待审核，已通过，已拒绝，已打款，已过期
+CNS/
+├── config/
+|   ├── config.js
+|   └── database.js
+├── controllers/
+│   ├── promotionController.js
+│   ├── submitController.js
+│   ├── wechatController.js
+│   └── withdrawalController.js
+├── middleware/
+├── models
+│   ├── admin.js
+|   ├── init.js
+|   ├── permission.js
+|   ├── role.js
+|   ├── rolepermission.js
+│   └── submission.js
+├── public/
+│   ├── css/
+|   ├── js/
+|   ├── form.html
+|   ├── promotion.html
+│   └── promotioninfo.html
+├── services/
+│   ├── submitService.js
+|   ├── wechatService.js
+│   └── withdrawlsService.js
+├── app.js
+├── package-lock.json
+└── package.json

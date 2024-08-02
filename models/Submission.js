@@ -178,15 +178,6 @@ const Withdrawals = sequelize.define(
   }
 );
 
-(async () => {
-  try {
-    await sequelize.sync({ force: false });
-    console.log("Sync complete!");
-  } catch (error) {
-    console.error("Error during sync:", error);
-  }
-})();
-
 module.exports = {
   User,
   PromotionInfo,
