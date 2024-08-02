@@ -67,14 +67,14 @@ app.get("/api/getQrCode/:filename", promotionController.handleGetUserQrCode);
 app.get('/user/:userId', promotionController.handleRedirectPromotion)
 
 // 管理员登录、注册的路由
-// app.post("/api/admin/register", adminController.registerAdmin);
-// app.post("/api/admin/login", adminController.loginAdmin);;
-// app.get("/admin/register", async (req, res) => {
-//   res.sendFile(__dirname + "/public/adminRegister.html");
-// });
-// app.get("/admin/login", async (req, res) => {
-//   res.sendFile(__dirname + "/public/adminLogin.html");
-// });
+app.post("/api/admin/register", adminController.registerAdmin);
+app.post("/api/admin/login", adminController.loginAdmin);;
+app.get("/admin/register", async (req, res) => {
+  res.sendFile(__dirname + "/public/register.html");
+});
+app.get("/admin/login", async (req, res) => {
+  res.sendFile(__dirname + "/public/login.html");
+});
 
 app.listen(config.server.port, () => {
   logger.info(`Server running on port ${config.server.port}`);
