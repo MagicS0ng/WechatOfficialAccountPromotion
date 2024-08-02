@@ -5,7 +5,7 @@ const RolePermission = require('./rolePermission');
 const Admin = require('./admin');
 
 async function initialize() {
-  await sequelize.sync({ force: false });
+  await sequelize.sync({ force: false, alter:true });
 
   const [superRole, normalRole] = await Promise.all([
     Role.findOrCreate({ where: { name: 'super' } }),

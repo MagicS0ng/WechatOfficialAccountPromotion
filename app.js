@@ -9,6 +9,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const config = require("./config/config");
 const logger = require("./utils/logger");
 const { initialize } = require("./models/init");
+const adminController = require("./controllers/adminController");
 
 (async () => {
   try {
@@ -33,14 +34,6 @@ app.use(
     cookie: { secure: false }, // 在生产环境中应设置为true，使用https
   })
 );
-// sequelize
-//   .sync()
-//   .then(() => {
-//     logger.info("Database synchronized");
-//   })
-//   .catch((err) => {
-//     logger.error(`Database synchronization error: ${err.message}`);
-//   });
 // 微信服务器验证
 app.get("/wechat", wechatController.handleVerifyServer);
 
@@ -72,6 +65,17 @@ app.get("/api/submitwithdrawal", withdrawalController.handlesubmitWithdrawl);
 // app.get("/api/getWithdrawState", withdrawalController.handleWithdrawRecords);
 app.get("/api/getQrCode/:filename", promotionController.handleGetUserQrCode);
 app.get('/user/:userId', promotionController.handleRedirectPromotion)
+
+// 管理员登录、注册的路由
+// app.post("/api/admin/register", adminController.registerAdmin);
+// app.post("/api/admin/login", adminController.loginAdmin);;
+// app.get("/admin/register", async (req, res) => {
+//   res.sendFile(__dirname + "/public/adminRegister.html");
+// });
+// app.get("/admin/login", async (req, res) => {
+//   res.sendFile(__dirname + "/public/adminLogin.html");
+// });
+
 app.listen(config.server.port, () => {
   logger.info(`Server running on port ${config.server.port}`);
 });

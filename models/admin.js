@@ -3,20 +3,36 @@ const sequelize = require('../config/database');
 const Role = require('./role');
 
 const Admin = sequelize.define('Admin', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
   username: {
-    type: DataTypes.STRING(50),
-    allowNull: false,
-    unique: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   password: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
+    type: DataTypes.STRING,
+    allowNull: false
   },
+  roleId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Role,
+      key: 'id'
+    }
+  },
+  authorizationCode: {
+    type: DataTypes.STRING,
+    allowNull: true
+  }
 }, {
   tableName: 'admins',
-  timestamps: true,
+  timestamps: false
 });
 
-Admin.belongsTo(Role);
+Role.hasMany(Admin, { foreignKey: 'roleId' });
+Admin.belongsTo(Role, { foreignKey: 'roleId' });
 
 module.exports = Admin;
