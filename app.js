@@ -11,6 +11,7 @@ const logger = require("./utils/logger");
 const { initialize } = require("./models/init");
 const adminController = require("./controllers/adminController");
 const recordManageController = require("./controllers/recordManageController");
+const authMidware = require("./middlewares/authMiddlewares");
 (async () => {
   try {
     await initialize();
@@ -88,10 +89,19 @@ app.get("/admin/register", async (req, res) => {
 app.get("/admin/login", async (req, res) => {
   res.sendFile(__dirname + "/public/login.html");
 });
-app.get("/admin/dashboard", (req, res) => {
+app.get("/admin/dashboard", authMidware, (req, res) => {
   res.sendFile(__dirname + "/public/dashboard.html");
 });
+app.get("/api/admin/checkauth", async (req, res) => {
+  if(req.session && req.session.user)
+  {
+    res.json({authenticated: true, username: req.session.user.username});
+  }else{
+    res.json({authenticated: false});
+  }
+})
 app.get("/api/admin/fetchrecords", recordManageController.fetchRecords);
+app.put("/api/admin/submitreview", recordManageController.submitReview);
 app.listen(config.server.port, () => {
   logger.info(`Server running on port ${config.server.port}`);
 });

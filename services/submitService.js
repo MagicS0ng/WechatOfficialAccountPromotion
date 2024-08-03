@@ -133,16 +133,57 @@ async function submitPromotionRecords(
 async function fetchWithdrawalsWithSelectedColumns() {
   try {
     const result = await Submission.Withdrawals.findAll({
-      include: [{
-        model: Submission.User,
-        attributes: ['phone', 'nickname']
-      }],
-      attributes: ['status','amount','request_date'],
+      include: [
+        {
+          model: Submission.User,
+          attributes: ["phone", "nickname"],
+        },
+      ],
+      attributes: ["id", "status", "amount", "request_date"],
     });
     return result;
   } catch (error) {
-    console.error('Error fetching withdrawals with selected columns:', error);
+    console.error("Error fetching withdrawals with selected columns:", error);
     throw error;
+  }
+}
+async function updateWithdrawalStatus(updatedData) {
+  // TODO 增加转账记录id
+  let transaction;
+  try {
+    const { id, status, remarks, reviewDate, reviewer } = updatedData;
+    transaction = await sequelize.transaction();
+    if (remarks) {
+      await Submission.Withdrawals.update(
+        {
+          status: status,
+          remark: remarks,
+          review_date: reviewDate,
+          reviewer: reviewer,
+        },
+        {
+          where: {
+            id: id,
+          },
+        },
+        { transaction }
+      );
+      await transaction.commit();
+    } else {
+      await Submission.Withdrawals.update(
+        {
+          status: status,
+        },
+        {
+          where: {
+            id: id,
+          },
+        }
+      );
+    }
+  } catch (error) {
+    console.log(error);
+    throw new Error("update withdrawal status failed, error message:", error);
   }
 }
 module.exports = {
@@ -153,5 +194,6 @@ module.exports = {
   generateQrCode,
   checkPromoteeReceiptExist,
   submitPromotionRecords,
-  fetchWithdrawalsWithSelectedColumns
+  fetchWithdrawalsWithSelectedColumns,
+  updateWithdrawalStatus,
 };

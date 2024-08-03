@@ -1,3 +1,26 @@
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('/api/admin/checkauth', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (!data.authenticated) {
+      window.location.href = '/admin/login';
+    }else
+    {
+      document.getElementById('admin-name').textContent =  data.username;
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('Error loading data. Please try again later.', error);
+    window.location.href = '/admin/login';
+  });
+});
+
 let currentPage = 1;
 const itemsPerPage = 10;
 let withdrawalsData = [];
@@ -37,6 +60,7 @@ const renderPage = () => {
   const withdrawalsList = document.getElementById('withdrawalsList');
   withdrawalsList.innerHTML = `
     <div class="withdrawal-item header">
+      <span>提现记录id</span>
       <span>微信昵称</span>
       <span>手机号</span>
       <span>可提现金额</span>
@@ -51,6 +75,7 @@ const renderPage = () => {
     const withdrawalItem = document.createElement('div');
     withdrawalItem.className = 'withdrawal-item';
     withdrawalItem.innerHTML = `
+      <span>${item.id}</span>
       <span>${item.User.nickname}</span>
       <span>${item.User.phone}</span>
       <span>${item.amount}</span>
@@ -61,7 +86,7 @@ const renderPage = () => {
         <option value="${StatusEnum.APPROVED}" ${item.status === StatusEnum.APPROVED ? 'selected' : ''}>Approved</option>
         <option value="${StatusEnum.REJECTED}" ${item.status === StatusEnum.REJECTED ? 'selected' : ''}>Rejected</option>
       </select>
-      <button class="sync" onclick="syncWithdrawal(${item.id})" ${item.status !== StatusEnum.PENDING ? 'disabled' : ''}>Sync</button>
+      <button class="sync" onclick="syncWithdrawal(${item.id})" ${item.status !== StatusEnum.PENDING ? 'disabled' : ''}>提交审核结果</button>
     `;
     withdrawalsList.appendChild(withdrawalItem);
   });
@@ -101,13 +126,19 @@ const syncWithdrawal = (id) => {
 
   const updatedRemarks = remarksInput.value;
   const updatedStatus = statusSelect.value;
-
-  fetch(`/api/withdrawals/${id}`, {
+  const reviewDate = new Date().toISOString();
+  const reviewer = document.getElementById('admin-name').textContent;
+  fetch(`/api/admin/submitReview?id=${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ status: updatedStatus, remarks: updatedRemarks })
+    body: JSON.stringify({
+      status: updatedStatus,
+      remarks: updatedRemarks,
+      reviewDate: reviewDate,
+      reviewer: reviewer
+    })
   })
   .then(response => response.json())
   .then(data => {

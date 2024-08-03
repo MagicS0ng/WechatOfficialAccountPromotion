@@ -46,10 +46,20 @@ exports.registerAdmin = async (req, res) => {
 };
 
 exports.loginAdmin = async (req, res) => {
-  console.log("admin logging..");
-  res.status(200).json({ 
-    success: true,
-    message: 'Admin logged in successfully' });
+  const { username, password } = req.body;
+  const user = await Admin.findOne({ where: { username: username} });
+  if (user && (await bcrypt.compare(password, user.password))) {
+    req.session.user = user;
+    res.status(200).json({
+      success: true,
+      message: "Admin logged in successfully",
+    });
+  }else{
+    res.status(401).json({
+      success: false,
+      message: "Invalid username or password",
+    });
+  }
 };
 exports.updateAuthorizationCode = async (req, res) => {
   const { newAuthorizationCode } = req.body;
